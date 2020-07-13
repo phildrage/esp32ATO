@@ -267,14 +267,14 @@ void callback(char* topic, byte* payload, unsigned int length) {
   SerialBT.println ("Float payload - ");
   SerialBT.println (load);
   
- if(strcmp(topic, "ATO/Cal/1") == 0){
-  float raw = (load/TDSfactor)*(1+(0.02*(temp1-25)));
-  float cal1 = (raw/(133.42*(pow(voltage1,3)))-(255.86*(pow(voltage1,2)))+(857.39*voltage1));
-EEPROM.writeFloat (20, cal1);
-EEPROM.commit;
-SerialBT.println(EEPROM.readFloat(20));
-
-  }
+// if(strcmp(topic, "ATO/Cal/1") == 0){
+//  float raw = (load/TDSfactor)*(1+(0.02*(temp1-25)));
+//  float cal1 = (raw/(133.42*(pow(voltage1,3)))-(255.86*(pow(voltage1,2)))+(857.39*voltage1));
+//EEPROM.writeFloat (20, cal1);
+//EEPROM.commit;
+//SerialBT.println(EEPROM.readFloat(20));
+//
+//  }
  if(strcmp(topic, "ATO/Cal/2") == 0){
   EEPROM.write(5,load);
   SerialBT.println ("eeprom saved ");
