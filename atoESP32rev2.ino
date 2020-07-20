@@ -14,7 +14,7 @@
 BluetoothSerial SerialBT;
 
 const char* ssid = "ASUS";
-const char* password = "9KU62NP9";
+const char* password = "********";
 IPAddress server(192, 168, 1, 90);
 
 #define ONE_WIRE_BUS 4     //  D4 on physical board
