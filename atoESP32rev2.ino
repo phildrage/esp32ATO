@@ -1,5 +1,5 @@
 
-//up to date as of 10/7/20
+//up to date as of 17/7/20
 //logic to complete functionality.
   
 //  remember to save as intended filename before making changes
@@ -32,7 +32,7 @@ int TDS2            = 35;
 int tds1value       = 666;
 int tds2value       = 666;
 int Lev1            = 14;
-int Lev2            = 12;
+int Lev2            = 13;
 int LowState        = 0;
 int HighState       = 0;
 char* action        = "0";   // 0 = waiting, 1 = dumping, 2 = filling
@@ -160,7 +160,20 @@ void measureSend(){
  SerialBT.println(LowState);
  SerialBT.print("level switch 2- ");
  SerialBT.println(HighState);
-
+ 
+ if(HighState == HIGH){
+client.publish("ATO/auto/feedback/HighState","red");
+ }
+  if(HighState == LOW){
+client.publish("ATO/feedback/HighState","green");
+ }
+  if(LowState == HIGH){
+client.publish("ATO/auto/feedback/LowState","red");
+ }
+  if(LowState == LOW){
+client.publish("ATO/feedback/LowState","green");
+ }
+ 
  // serial
  Serial.print("level switch 1- ");
  Serial.println(LowState);
@@ -286,6 +299,12 @@ Serial.println (TDS2calc);
   char publev2[100];
   dtostrf(Lev2,2,2,publev2);
   client.publish("ATO/Lev2",publev2);
+  SerialBT.println(" ");
+  SerialBT.print("membrane TDS limit - ");
+  SerialBT.println(tdsLimitM);
+  SerialBT.print("DI TDS limit - ");
+  SerialBT.println(tdsLimitDI);
+  SerialBT.println(" ");
 
 // warning if DI resin no good
 
@@ -394,19 +413,19 @@ if (handAuto == 0){
     client.publish("ATO/auto/feedback/waterIn","red");  
     }
   }
-  
   if(strcmp(topic, "ATO/relays/dump") == 0){
     if (load == 1){
     digitalWrite(dumpPin,HIGH);
-    Serial.println("Dump relay - OFF");
+    Serial.println("dump relay - OFF");
     client.publish("ATO/auto/feedback/dump","green");  
     }
     if (load == 0){
     digitalWrite(dumpPin,LOW);
-    Serial.println("Dump relay - ON");
+    Serial.println("dump relay - ON");
     client.publish("ATO/auto/feedback/dump","red");  
     }
   }
+
   if(strcmp(topic, "ATO/relays/membraneOut") == 0){
     if (load == 1){
     digitalWrite(membraneOutPin,HIGH);
@@ -498,14 +517,14 @@ while (HighState == HIGH){
 digitalWrite(waterInPin,LOW);
 digitalWrite(membraneOutPin, LOW);
 measureSend();
-delay(5000);
 while (TDS2calc >= tdsLimitM){
 digitalWrite(dumpPin,LOW);
 action = "1";
+delay(5000);
 client.publish("ATO/STATE", action);
 Serial.println("Dumping");
 SerialBT.println("Dumping");
-delay(500);
+delay(5000);
 measureSend();
   }
 digitalWrite(dumpPin,HIGH);
@@ -513,12 +532,14 @@ Serial.println("Filling");
 SerialBT.println("Filling") ;
 action = "2";
 client.publish("ATO/STATE", action);
-delay(500);
+delay(5000);
 }
 digitalWrite(waterInPin,HIGH);
 digitalWrite(dumpPin,HIGH);
 digitalWrite(membraneOutPin,HIGH);
 Serial.println("ATO complete");
 SerialBT.println("ATO Complete") ;
-delay(500);
+action = "0";
+client.publish("ATO/STATE", action);
+delay(5000);
 }
